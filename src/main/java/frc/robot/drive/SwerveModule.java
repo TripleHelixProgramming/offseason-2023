@@ -1,6 +1,6 @@
 // Copyright (c) Triple Helix Robotics
 
-package frc.robot.subsystems;
+package frc.robot.drive;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax.*;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -129,6 +130,10 @@ public class SwerveModule extends SubsystemBase {
      */
     public SwerveModuleState getState() {
         return new SwerveModuleState(driveEncoder.getVelocity(), getRelativePosition());
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(this.getDriveDistance(), this.getRelativePosition());
     }
 
     /**

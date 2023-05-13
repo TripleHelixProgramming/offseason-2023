@@ -1,6 +1,6 @@
 // Copyright (c) Triple Helix Robotics
 
-package frc.robot.subsystems;
+package frc.robot.drive;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +20,8 @@ import frc.robot.Constants.ModuleConstants;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
+
+  private static final int kNumSwerveModules = 4;
 
   // Robot swerve modules
   private final SwerveModule m_frontLeft =
@@ -69,8 +72,7 @@ public class SwerveDrive extends SubsystemBase {
 
     // Zero the gyro.
     m_ahrs.zeroYaw();
-
-    m_odometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getHeading());
+    m_odometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getHeading(), getModulePositions());
 
     for (SwerveModule module: modules) {
       module.resetDistance();
@@ -82,10 +84,7 @@ public class SwerveDrive extends SubsystemBase {
     // Update the odometry in the periodic block
     m_odometry.update(
         getHeading(),
-        m_frontLeft.getState(),
-        m_frontRight.getState(),
-        m_rearLeft.getState(),
-        m_rearRight.getState());
+        getModulePositions());
     
     SmartDashboard.putNumber("Heading", getHeading().getDegrees());
     
@@ -125,7 +124,7 @@ public class SwerveDrive extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(pose, getHeading());
+    m_odometry.resetPosition(getHeading(), getModulePositions(), pose);
   }
 
   /**
@@ -184,19 +183,29 @@ public class SwerveDrive extends SubsystemBase {
    * @param desiredStates The desired SwerveModule states.
    */
   public void setModuleStates(SwerveModuleState[] desiredStates) {
-    for (int i = 0; i <= 3; i++) {
+    for (int i = 0; i < kNumSwerveModules; i++) {
       modules[i].setDesiredState(desiredStates[i]);
     }
   }
 
   public SwerveModuleState[] getModuleStates() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
+    SwerveModuleState[] states = new SwerveModuleState[kNumSwerveModules];
 
-    for (int i = 0; i <= 3; i++) {
-      states[i++] = modules[i].getState();
+    for (int i = 0; i < kNumSwerveModules; i++) {
+      states[i] = modules[i].getState();
     }
 
     return states;
+  }
+
+  public SwerveModulePosition[] getModulePositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[kNumSwerveModules];
+
+    for (int i = 0; i < kNumSwerveModules; i++) {
+      positions[i] = modules[i].getPosition();
+    }
+
+    return positions;
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
