@@ -12,25 +12,30 @@ public final class Constants {
       public static final ModuleType pdpType = ModuleType.kCTRE;
       public static final int pdpPort = 0;
 
-      //roboRIO DIO ports for the absolute encoders on each swerve module steering axis
+      // roboRIO DIO ports for the absolute encoders on each swerve module steering axis
       public static final int kRearRightTurningEncoderPort = 0;
       public static final int kFrontRightTurningEncoderPort = 1;
       public static final int kFrontLeftTurningEncoderPort = 2;
       public static final int kRearLeftTurningEncoderPort = 3;
 
-      //CAN IDs for the motor controllers for each swerve module drive axis motor
+      // CAN IDs for the motor controllers for each swerve module drive axis motor
       public static final int kRearRightDriveMotorPort = 10;
       public static final int kFrontRightDriveMotorPort = 12;
       public static final int kFrontLeftDriveMotorPort = 22;
       public static final int kRearLeftDriveMotorPort = 24;
   
-      //CAD IDs for the motor controllers for each swerve module steering axis motor
+      // CAN IDs for the motor controllers for each swerve module steering axis motor
       public static final int kRearRightTurningMotorPort = 11;  
       public static final int kFrontRightTurningMotorPort = 13;
       public static final int kFrontLeftTurningMotorPort = 23;
       public static final int kRearLeftTurningMotorPort = 25;
 
-      //public static final int kGyroPort = 20;
+      // CAN IDs for intake and arm 
+      public static final int kIntakeLeaderPort = 15;
+      public static final int kIntakeFollowerPort = 16;
+      public static final int kArmWristPort = 17;
+
+      public static final int kWristEncoderPort = 5; // TODO this
   }
 
   public static final class DriveConstants {
@@ -46,16 +51,6 @@ public final class Constants {
     public static final Rotation2d kFrontRightTurningEncoderOffset = Rotation2d.fromDegrees(44.23);
     public static final Rotation2d kFrontLeftTurningEncoderOffset = Rotation2d.fromDegrees(15.19);
     public static final Rotation2d kRearLeftTurningEncoderOffset = Rotation2d.fromDegrees(99.36);
-
-    // public static final boolean kFrontLeftDriveEncoderReversed = true;
-    // public static final boolean kFrontRightDriveEncoderReversed = false;
-    // public static final boolean kRearLeftDriveEncoderReversed = true;
-    // public static final boolean kRearRightDriveEncoderReversed = false;
-
-    // public static final boolean kFrontLeftTurningEncoderReversed = true;
-    // public static final boolean kFrontRightTurningEncoderReversed = true;
-    // public static final boolean kRearLeftTurningEncoderReversed = false;
-    // public static final boolean kRearRightTurningEncoderReversed = false;
 
     // Distance between centers of right and left wheels on robot
     // Units: meters
@@ -125,5 +120,99 @@ public final class Constants {
     // Unit: amps
     public static final int kDriveCurrentLimit = 60;
     public static final int kSteerCurrentLimit = 25;
+  }
+
+  public static final class ArmConstants {
+
+    public static final double kWristP = 0;
+    public static final double kWristI = 0;
+    public static final double kWristD = 0;
+    public static final double kWristFF = 0;
+    
+    public static final double kIntakeP = 0;
+    public static final double kIntakeI = 0;
+    public static final double kIntakeD = 0;
+    public static final double kIntakeFF = 0;
+    
+    public static final int kIntakeNominalVoltage = 12;
+    public static final int kWristNominalVoltage = 12;
+
+    public static final int kIntakeCurrentLimit = 20;
+    public static final int kWristCurrentLimit = 20;
+
+    public static final double kArmIntakingPosition = 1;
+    public static final double kIntakingVoltage = 1;
+
+    public enum Setpoint {
+      // TODO: change these values to reflect actual setpoints/make robot work
+      LOW(1, 2),
+      MID(2, 3),
+      HIGH(3, 3);
+
+      private final double armPosition;
+      private final double intakeSpeed;
+      
+      Setpoint(double armPosition, double intakeSpeed) {
+        this.armPosition = armPosition;
+        this.intakeSpeed = intakeSpeed;
+      }
+      
+      public double getArmPosition() {
+        return armPosition;
+      }
+      
+      public double getIntakeVoltage() {
+        return intakeSpeed;
+      }
+    }
+  }
+
+  public static final class OIConstants {
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
+
+    // Xbox Joystick Axis
+    public static final int kXboxLeftXAxis = 0;
+    public static final int kXboxLeftYAxis = 1;
+    public static final int kXboxLeftTrigger = 2;
+    public static final int kXboxRightTripper = 3;
+    public static final int kXboxRightXAxis = 4;
+    public static final int kXboxRightYAxis = 5;
+
+    // Xbox Button Bindings
+    public static final int kXboxA = 1;
+    public static final int kXboxB = 2;
+    public static final int kXboxX = 3;
+    public static final int kXboxY = 4;
+    public static final int kXboxLB = 5;
+    public static final int kXboxRB = 6;
+    public static final int kXboxView = 7;
+    public static final int kXboxMenuT = 8;
+    public static final int kXboxLeftStickButton = 9;
+    public static final int kXboxRightStickButton = 10;
+
+    // RadioMaster Zorro Joystick Axis
+    public static final int kZorroLeftXAxis = 0;
+    public static final int kZorroLeftYAxis = 1;
+    public static final int kZorroLeftDial = 2;
+    public static final int kZorroRightDial = 3;
+    public static final int kZorroRightXAxis = 4;
+    public static final int kZorroRightYAxis = 5;
+
+    // RadioMaster Zorro Button Bindings
+    public static final int kZorroBDown = 1;
+    public static final int kZorroBMid = 2;
+    public static final int kZorroBUp = 3;
+    public static final int kZorroEDown = 4;
+    public static final int kZorroEUp = 5;
+    public static final int kZorroAIn = 6;
+    public static final int kZorroGIn = 7;
+    public static final int kZorroCDown = 8;
+    public static final int kZorroCMid = 9;
+    public static final int kZorroCUp = 10;
+    public static final int kZorroFDown = 11;
+    public static final int kZorroFUp = 12;
+    public static final int kZorroDIn = 13;
+    public static final int kZorroHIn = 14;
   }
 }

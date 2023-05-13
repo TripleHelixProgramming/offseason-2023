@@ -1,6 +1,6 @@
 // Copyright (c) Triple Helix Robotics
 
-package frc.robot.commands;
+package frc.robot.drive.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -9,13 +9,14 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.drive.SwerveDrive;
+
 import java.lang.Math;
 public class JoystickDrive extends CommandBase {
     private final SwerveDrive drivetrain;
     private DoubleSupplier x, y, theta;
 
-    public JoystickDrive(SwerveDrive drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta){
+    public JoystickDrive(SwerveDrive drivetrain, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta) {
         this.drivetrain = drivetrain;
         this.x = x;
         this.y = y;
