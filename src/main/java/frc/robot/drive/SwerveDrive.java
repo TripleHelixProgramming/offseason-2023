@@ -14,9 +14,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ElectricalConstants;
 import frc.robot.Constants.ModuleConstants;
+
+import static frc.robot.Constants.DriveConstants.*;
+import static frc.robot.Constants.ModuleConstants.*;
 
 @SuppressWarnings("PMD.ExcessiveImports")
 public class SwerveDrive extends SubsystemBase {
@@ -26,38 +28,34 @@ public class SwerveDrive extends SubsystemBase {
   // Robot swerve modules
   private final SwerveModule m_frontLeft =
       new SwerveModule(
-          ElectricalConstants.kFrontLeftDriveMotorPort,
-          ElectricalConstants.kFrontLeftTurningMotorPort,
-          ElectricalConstants.kFrontLeftTurningEncoderPort,
-          // DriveConstants.kFrontLeftDriveEncoderReversed,
-          DriveConstants.kFrontLeftTurningEncoderOffset
+          ElectricalConstants.kDriveMotorPorts[kFrontLeftIndex],
+          ElectricalConstants.kSteerMotorPorts[kFrontLeftIndex],
+          ElectricalConstants.kSteerEncoderPorts[kFrontLeftIndex],
+          kSteerEncoderOffsets[kFrontLeftIndex]
           );
 
   private final SwerveModule m_frontRight =
       new SwerveModule(
-          ElectricalConstants.kFrontRightDriveMotorPort,
-          ElectricalConstants.kFrontRightTurningMotorPort,
-          ElectricalConstants.kFrontRightTurningEncoderPort,
-          // DriveConstants.kFrontRightDriveEncoderReversed,
-          DriveConstants.kFrontRightTurningEncoderOffset
+          ElectricalConstants.kDriveMotorPorts[kFrontRightIndex],
+          ElectricalConstants.kSteerMotorPorts[kFrontRightIndex],
+          ElectricalConstants.kSteerEncoderPorts[kFrontRightIndex],
+          kSteerEncoderOffsets[kFrontRightIndex]
           );
 
   private final SwerveModule m_rearLeft =
       new SwerveModule(
-          ElectricalConstants.kRearLeftDriveMotorPort,
-          ElectricalConstants.kRearLeftTurningMotorPort,
-          ElectricalConstants.kRearLeftTurningEncoderPort,
-          // DriveConstants.kRearLeftDriveEncoderReversed,
-          DriveConstants.kRearLeftTurningEncoderOffset
+          ElectricalConstants.kDriveMotorPorts[kRearLeftIndex],
+          ElectricalConstants.kSteerMotorPorts[kRearLeftIndex],
+          ElectricalConstants.kSteerEncoderPorts[kRearLeftIndex],
+          kSteerEncoderOffsets[kRearLeftIndex]
           );
 
   private final SwerveModule m_rearRight =
       new SwerveModule(
-          ElectricalConstants.kRearRightDriveMotorPort,
-          ElectricalConstants.kRearRightTurningMotorPort,
-          ElectricalConstants.kRearRightTurningEncoderPort,
-          // DriveConstants.kRearRightDriveEncoderReversed,
-          DriveConstants.kRearRightTurningEncoderOffset
+          ElectricalConstants.kDriveMotorPorts[kRearRightIndex],
+          ElectricalConstants.kSteerMotorPorts[kRearRightIndex],
+          ElectricalConstants.kSteerEncoderPorts[kRearRightIndex],
+          kSteerEncoderOffsets[kRearRightIndex]
           );
 
   private SwerveModule[] modules = {m_frontLeft, m_frontRight, m_rearLeft, m_rearRight};
@@ -72,7 +70,7 @@ public class SwerveDrive extends SubsystemBase {
 
     // Zero the gyro.
     m_ahrs.zeroYaw();
-    m_odometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getHeading(), getModulePositions());
+    m_odometry = new SwerveDriveOdometry(kDriveKinematics, getHeading(), getModulePositions());
 
     for (SwerveModule module: modules) {
       module.resetDistance();
@@ -132,59 +130,52 @@ public class SwerveDrive extends SubsystemBase {
    *
    * @param speeds ChassisSpeeds object with the desired chassis speeds [m/s and rad/s].
    */
-  @SuppressWarnings("ParameterName")
-  public void drive(ChassisSpeeds speeds, ChassisSpeeds percents) {
+  public void joystickDrive(double joystickDrive, 
+                            double joystickStrafe, 
+                            double joystickRotate,
+                            boolean fieldRelative) {
+    ChassisSpeeds speeds = fieldRelative ? 
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+                          joystickDrive * kMaxTranslationalVelocity,
+                          joystickStrafe * kMaxTranslationalVelocity,
+                          joystickRotate * kMaxRotationalVelocity,
+                          getHeading()
+        ) :
+        new ChassisSpeeds(joystickDrive * kMaxTranslationalVelocity,
+                          joystickStrafe * kMaxTranslationalVelocity,
+                          joystickRotate * kMaxRotationalVelocity);
+    SwerveModuleState[] states = kDriveKinematics.toSwerveModuleStates(speeds);
+    
+    double scale = Math.max(Math.hypot(joystickDrive, joystickStrafe), joystickRotate);
 
-    if (speeds.vxMetersPerSecond == 0 && speeds.vyMetersPerSecond == 0 && speeds.omegaRadiansPerSecond == 0) {
-      brake();
-      return;
+    // Identify fastest motor's speed.                                      
+    double realMaxSpeed = 0.0;
+    for (SwerveModuleState moduleState : states) {
+      double speed = Math.abs(moduleState.speedMetersPerSecond);
+      realMaxSpeed = Math.max(realMaxSpeed, speed);
     }
     
-    SwerveModuleState[] swerveModuleStates =
-        DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
+    if (realMaxSpeed != 0.0) {
+        for (SwerveModuleState moduleState : states) {
+          moduleState.speedMetersPerSecond *= (scale * kMaxVelocity / realMaxSpeed);
+        }
+    }
            
-    normalizeDrive(swerveModuleStates, ModuleConstants.kMaxVelocity, percents);
-    setModuleStates(swerveModuleStates);
+    for (int i = 0; i < 4; ++i) {
+      modules[i].setDesiredState(states[i]);
+    }
+  }
+
+  public void drive(ChassisSpeeds speeds) {
+    SwerveModuleState[] moduleStates = kDriveKinematics.toSwerveModuleStates(speeds);
+    for (int i = 0; i < 4; ++i) {
+      modules[i].setDesiredState(moduleStates[i]);
+    }
   }
 
   public void brake() {
     for (SwerveModule module : modules) {
       module.setDesiredState(new SwerveModuleState(0, module.getState().angle));
-    }
-  }
-
-  public void normalizeDrive(SwerveModuleState[] desiredStates, 
-                                      double maxVelocity,
-                                      ChassisSpeeds percents) {
-
-    double x = percents.vxMetersPerSecond;
-    double y = percents.vyMetersPerSecond;
-    double theta = percents.omegaRadiansPerSecond;
-
-    // Identify fastest motor's speed.                                      
-    double realMaxSpeed = 0.0;
-    for (SwerveModuleState moduleState : desiredStates) {
-      if (Math.abs(moduleState.speedMetersPerSecond) > realMaxSpeed) {
-        realMaxSpeed = Math.abs(moduleState.speedMetersPerSecond);
-      }
-    }
-    
-    double k = Math.max(Math.hypot(x, y), Math.abs(theta));
-    if (realMaxSpeed != 0.0) {
-        for (SwerveModuleState moduleState : desiredStates) {
-          moduleState.speedMetersPerSecond *= (k * maxVelocity / realMaxSpeed);
-        }
-    }
-  }
-
-  /**
-   * Sets the swerve ModuleStates.
-   *
-   * @param desiredStates The desired SwerveModule states.
-   */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    for (int i = 0; i < kNumSwerveModules; i++) {
-      modules[i].setDesiredState(desiredStates[i]);
     }
   }
 
