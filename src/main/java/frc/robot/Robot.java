@@ -9,12 +9,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.arm.ArmInterface;
 import frc.robot.drive.SwerveDrive;
-import frc.robot.drive.commands.JoystickDrive;
 
 import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
 
@@ -43,12 +44,15 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     configureButtonBindings();
 
-    // TODO: change these to actually match real axis ports
-    DoubleSupplier xAxis = () -> driver.getRawAxis(0);
-    DoubleSupplier yAxis = () -> driver.getRawAxis(1);
-    DoubleSupplier thetaAxis = () -> driver.getRawAxis(2);
 
-    swerve.setDefaultCommand(new JoystickDrive(swerve, xAxis, yAxis, thetaAxis));
+    swerve.setDefaultCommand(new RunCommand(
+      // TODO: change these to actually match real axis ports
+      () -> swerve.joystickDrive(
+        driver.getRawAxis(0), 
+        driver.getRawAxis(1), 
+        driver.getRawAxis(2), 
+        DriveConstants.kFieldRelative
+    ), swerve));
   }
 
   @Override

@@ -12,23 +12,10 @@ public final class Constants {
       public static final ModuleType pdpType = ModuleType.kCTRE;
       public static final int pdpPort = 0;
 
-      // roboRIO DIO ports for the absolute encoders on each swerve module steering axis
-      public static final int kRearRightTurningEncoderPort = 0;
-      public static final int kFrontRightTurningEncoderPort = 1;
-      public static final int kFrontLeftTurningEncoderPort = 2;
-      public static final int kRearLeftTurningEncoderPort = 3;
-
-      // CAN IDs for the motor controllers for each swerve module drive axis motor
-      public static final int kRearRightDriveMotorPort = 10;
-      public static final int kFrontRightDriveMotorPort = 12;
-      public static final int kFrontLeftDriveMotorPort = 22;
-      public static final int kRearLeftDriveMotorPort = 24;
-  
-      // CAN IDs for the motor controllers for each swerve module steering axis motor
-      public static final int kRearRightTurningMotorPort = 11;  
-      public static final int kFrontRightTurningMotorPort = 13;
-      public static final int kFrontLeftTurningMotorPort = 23;
-      public static final int kRearLeftTurningMotorPort = 25;
+      // -----------------------------------------   {fl  fr  rl  rr}
+      public static final int[] kSteerEncoderPorts = { 0,  1,  2,  3};
+      public static final int[] kDriveMotorPorts   = {10, 12, 22, 24};
+      public static final int[] kSteerMotorPorts   = {11, 13, 23, 25};
 
       // CAN IDs for intake and arm 
       public static final int kIntakeLeaderPort = 15;
@@ -41,16 +28,16 @@ public final class Constants {
   public static final class DriveConstants {
 
     // Define the conventional order of our modules when putting them into arrays
-    public static final int FRONT_LEFT = 0;
-    public static final int FRONT_RIGHT = 1;
-    public static final int REAR_LEFT = 2;
-    public static final int REAR_RIGHT = 3;
+    public static final int kFrontLeftIndex = 0;
+    public static final int kFrontRightIndex = 1;
+    public static final int kRearLeftIndex = 2;
+    public static final int kRearRightIndex = 3;
     
     // Rotational transformation between absolute encoder "north" and wheel "forward"
-    public static final Rotation2d kRearRightTurningEncoderOffset = Rotation2d.fromDegrees(-64.2679);
-    public static final Rotation2d kFrontRightTurningEncoderOffset = Rotation2d.fromDegrees(44.23);
-    public static final Rotation2d kFrontLeftTurningEncoderOffset = Rotation2d.fromDegrees(15.19);
-    public static final Rotation2d kRearLeftTurningEncoderOffset = Rotation2d.fromDegrees(99.36);
+    public static final Rotation2d[] kSteerEncoderOffsets = {Rotation2d.fromDegrees(-64.2679), // fl
+                                                             Rotation2d.fromDegrees(44.23),    // fr
+                                                             Rotation2d.fromDegrees(15.19),    // rl
+                                                             Rotation2d.fromDegrees(99.36)};   // rr
 
     // Distance between centers of right and left wheels on robot
     // Units: meters
