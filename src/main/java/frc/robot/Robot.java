@@ -17,8 +17,6 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.arm.ArmInterface;
 import frc.robot.drive.SwerveDrive;
 
-import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
-
 public class Robot extends TimedRobot {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +28,7 @@ public class Robot extends TimedRobot {
   private Joystick driver = new Joystick(0);
   
   private SwerveDrive swerve;
-  private ArmInterface arm;
+  // private ArmInterface arm;
 
   private Command autonomousCommand = new PrintCommand("default auto command! please override me!");
   
@@ -43,7 +41,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     configureButtonBindings();
-
 
     swerve.setDefaultCommand(new RunCommand(
       // TODO: change these to actually match real axis ports
@@ -65,7 +62,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    arm.syncEncoders();
+    // arm.syncEncoders();
     swerve.syncEncoders();
   }
 
@@ -105,9 +102,7 @@ public class Robot extends TimedRobot {
     Trigger leftBumper = new JoystickButton(driver, OIConstants.kXboxLB);
     Trigger rightBumper = new JoystickButton(driver, OIConstants.kXboxRB);
 
-    leftBumper.onTrue(arm.score()).onFalse(arm.stow());
-
-    rightBumper.onTrue(arm.intake().andThen(waitUntil(arm::hasCube)).andThen(arm.stow()))
-               .onFalse(arm.stow());
+    // leftBumper.onTrue(arm.score()).onFalse(arm.stow());
+    // rightBumper.onTrue(arm.intake()).onFalse(arm.stow());
   }
 }
