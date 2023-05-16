@@ -28,10 +28,10 @@ public final class Constants {
   public static final class DriveConstants {
 
     // Define the conventional order of our modules when putting them into arrays
-    public static final int kFrontLeftIndex = 0;
+    public static final int kFrontLeftIndex  = 0;
     public static final int kFrontRightIndex = 1;
-    public static final int kRearLeftIndex = 2;
-    public static final int kRearRightIndex = 3;
+    public static final int kRearLeftIndex   = 2;
+    public static final int kRearRightIndex  = 3;
     
     // Rotational transformation between absolute encoder "north" and wheel "forward"
     public static final Rotation2d[] kSteerEncoderOffsets = {Rotation2d.fromDegrees(-64.2679), // fl
@@ -58,9 +58,9 @@ public final class Constants {
     // Positive y values represent moving toward the left of the robot.
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
-            new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),   // front left
-            new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),  // front right
-            new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),  // rear left
+            new Translation2d( kWheelBase / 2.0,  kTrackWidth / 2.0),   // front left
+            new Translation2d( kWheelBase / 2.0, -kTrackWidth / 2.0),  // front right
+            new Translation2d(-kWheelBase / 2.0,  kTrackWidth / 2.0),  // rear left
             new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0)  // rear right
             );
 
@@ -72,14 +72,14 @@ public final class Constants {
 
   public static final class ModuleConstants {
 
-    public static final double kDriveP = 0.025;
-    public static final double kDriveI = 0.0;
-    public static final double kDriveD = 0.0;
+    public static final double kDriveP  = 0.025;
+    public static final double kDriveI  = 0.0;
+    public static final double kDriveD  = 0.0;
     public static final double kDriveFF = 0.25;
 
-    public static final double kSteerP = 0.0075;
-    public static final double kSteerI = 0.0;
-    public static final double kSteerD = 0.0;
+    public static final double kSteerP  = 0.0075;
+    public static final double kSteerI  = 0.0;
+    public static final double kSteerD  = 0.0;
     public static final double kSteerFF = 0.0;
 
     // Unit: meters per second
@@ -89,7 +89,7 @@ public final class Constants {
     public static final double kWheelDiameter = 0.0762; // 3 in
 
     // Gear reduction (unitless) between the drive motor and the wheel
-    public static final double kDriveGearRatio = 5.5;
+    public static final double kDriveGearRatio = 4.71;
 
     // The drive encoder reports in RPM by default. Calculate the conversion factor
     // to make it report in meters per second.
@@ -111,24 +111,24 @@ public final class Constants {
 
   public static final class ArmConstants {
 
-    public static final double kWristP = 0;
-    public static final double kWristI = 0;
-    public static final double kWristD = 0;
+    public static final double kWristP  = 0;
+    public static final double kWristI  = 0;
+    public static final double kWristD  = 0;
     public static final double kWristFF = 0;
     
-    public static final double kIntakeP = 0;
-    public static final double kIntakeI = 0;
-    public static final double kIntakeD = 0;
+    public static final double kIntakeP  = 0;
+    public static final double kIntakeI  = 0;
+    public static final double kIntakeD  = 0;
     public static final double kIntakeFF = 0;
     
     public static final int kIntakeNominalVoltage = 12;
-    public static final int kWristNominalVoltage = 12;
+    public static final int kWristNominalVoltage  = 12;
 
     public static final int kIntakeCurrentLimit = 20;
-    public static final int kWristCurrentLimit = 20;
+    public static final int kWristCurrentLimit  = 20;
 
     public static final double kArmIntakingPosition = 1;
-    public static final double kIntakingVoltage = 1;
+    public static final double kIntakingVoltage     = 1;
 
     public enum Setpoint {
       // TODO: change these values to reflect actual setpoints/make robot work
