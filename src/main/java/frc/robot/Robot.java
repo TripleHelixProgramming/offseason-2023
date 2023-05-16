@@ -17,8 +17,6 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.arm.ArmInterface;
 import frc.robot.drive.SwerveDrive;
 
-import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
-
 public class Robot extends TimedRobot {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -106,8 +104,6 @@ public class Robot extends TimedRobot {
     Trigger rightBumper = new JoystickButton(driver, OIConstants.kXboxRB);
 
     leftBumper.onTrue(arm.score()).onFalse(arm.stow());
-
-    rightBumper.onTrue(arm.intake().andThen(waitUntil(arm::hasCube)).andThen(arm.stow()))
-               .onFalse(arm.stow());
+    rightBumper.onTrue(arm.intake()).onFalse(arm.stow());
   }
 }

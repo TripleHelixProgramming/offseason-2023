@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElectricalConstants;
 
+import static edu.wpi.first.wpilibj2.command.Commands.waitUntil;
 import static com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless;
 import static frc.robot.Constants.ArmConstants.*;
 
@@ -74,7 +75,8 @@ public class Arm extends SubsystemBase implements ArmInterface {
 
     @Override
     public Command intake() {
-        return this.setArmState(kArmIntakingPosition, kIntakingVoltage);
+        return this.setArmState(kArmIntakingPosition, kIntakingVoltage)
+                   .andThen(waitUntil(this::hasCube)).andThen(stow());
     }
 
     @Override
