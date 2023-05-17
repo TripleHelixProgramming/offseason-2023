@@ -16,6 +16,11 @@ public interface ArmInterface extends Subsystem {
     public Command intake();
 
     /**
+     * Command to intake cubes until the limit switch is hit
+     */
+    public Command intakeUntilCube();
+
+    /**
      * 
      * @return
      */
