@@ -16,6 +16,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.arm.ArmInterface;
 import frc.robot.drive.SwerveDrive;
+import frc.robot.prototype.Prototype;
 
 public class Robot extends TimedRobot {
 
@@ -27,7 +28,8 @@ public class Robot extends TimedRobot {
 
   private Joystick driver = new Joystick(0);
   
-  private SwerveDrive swerve;
+  private Prototype prototype;
+  // private SwerveDrive swerve;
   // private ArmInterface arm;
 
   private Command autonomousCommand = new PrintCommand("default auto command! please override me!");
@@ -40,16 +42,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    prototype = new Prototype();
+
     configureButtonBindings();
 
-    swerve.setDefaultCommand(new RunCommand(
-      // TODO: change these to actually match real axis ports
-      () -> swerve.joystickDrive(
-        driver.getRawAxis(0), 
-        driver.getRawAxis(1), 
-        driver.getRawAxis(2), 
-        DriveConstants.kFieldRelative
-    ), swerve));
+    // swerve.setDefaultCommand(new RunCommand(
+    //   // TODO: change these to actually match real axis ports
+    //   () -> swerve.joystickDrive(
+    //     driver.getRawAxis(0), 
+    //     driver.getRawAxis(1), 
+    //     driver.getRawAxis(2), 
+    //     DriveConstants.kFieldRelative
+    // ), swerve));
   }
 
   @Override
@@ -63,7 +67,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     // arm.syncEncoders();
-    swerve.syncEncoders();
+    // swerve.syncEncoders();
   }
 
   @Override
@@ -101,6 +105,8 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     Trigger leftBumper = new JoystickButton(driver, OIConstants.kXboxLB);
     Trigger rightBumper = new JoystickButton(driver, OIConstants.kXboxRB);
+
+    leftBumper.onTrue(prototype.shoot()).onFalse(prototype.stop());
 
     // leftBumper.onTrue(arm.score()).onFalse(arm.stow());
     // rightBumper.onTrue(arm.intake()).onFalse(arm.stow());
