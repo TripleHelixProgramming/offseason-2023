@@ -68,6 +68,10 @@ public class Arm extends SubsystemBase implements ArmInterface {
         return limitSwitch.get();
     }
 
+    private Command waitUntilCube() {
+        return waitUntil(this::hasCube);
+    }
+
     @Override
     public void setTargetSetpoint(Setpoint setpoint) {
         this.setpoint = setpoint;
@@ -75,8 +79,12 @@ public class Arm extends SubsystemBase implements ArmInterface {
 
     @Override
     public Command intake() {
-        return this.setArmState(kArmIntakingPosition, kIntakingVoltage)
-                   .andThen(waitUntil(this::hasCube)).andThen(stow());
+        return this.setArmState(kArmIntakingPosition, kIntakingVoltage);
+    }
+
+    @Override
+    public Command intakeUntilCube() {
+        return this.intake().andThen(this.waitUntilCube(), this.stow());
     }
 
     @Override
