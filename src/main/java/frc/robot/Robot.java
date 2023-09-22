@@ -26,9 +26,11 @@ public class Robot extends TimedRobot {
   /////////////////////////////////////////////////////////////////////////////
 
   private Joystick driver = new Joystick(0);
+  DoubleSupplier xAxis = () -> driver.getRawAxis(OIConstants.kXboxRightYAxis);
+  DoubleSupplier yAxis = () -> driver.getRawAxis(OIConstants.kXboxRightXAxis);
+  DoubleSupplier thetaAxis = () -> driver.getRawAxis(OIConstants.kXboxLeftXAxis);
   
-  private SwerveDrive swerve;
-  // private ArmInterface arm;
+  private final SwerveDrive swerve = new SwerveDrive();
 
   private Command autonomousCommand = new PrintCommand("default auto command! please override me!");
   
@@ -43,11 +45,10 @@ public class Robot extends TimedRobot {
     configureButtonBindings();
 
     swerve.setDefaultCommand(new RunCommand(
-      // TODO: change these to actually match real axis ports
       () -> swerve.joystickDrive(
-        driver.getRawAxis(0), 
-        driver.getRawAxis(1), 
-        driver.getRawAxis(2), 
+        xAxis.getAsDouble(), 
+        yAxis.getAsDouble(), 
+        thetaAxis.getAsDouble(), 
         DriveConstants.kFieldRelative
     ), swerve));
   }
